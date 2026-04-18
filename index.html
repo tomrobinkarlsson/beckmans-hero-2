@@ -29,11 +29,11 @@
         <!-- Eliot -->
         <div class="slide slide-large slide-student" data-student="eliot">
           <div class="student-images">
-            <img class="student-img is-active" src="assets/images/eliot-1.png" alt="" />
+            <img class="student-img" src="assets/images/eliot-1.png" alt="" />
             <img class="student-img" src="assets/images/eliot-2.png" alt="" />
             <img class="student-img" src="assets/images/eliot-3.png" alt="" />
-            <div class="student-overlay"></div>
           </div>
+          <div class="student-overlay"></div>
           <div class="slide-label label-center-left">
             <div class="label-row"><div class="label-pad"></div><div class="label-content"><span class="label-text">Eliot Axelsson</span></div><div class="label-cap"><img src="assets/vectors/ellipse-4.svg" alt="" /></div></div>
             <div class="label-sep"></div>
@@ -59,11 +59,11 @@
         <!-- Fanny -->
         <div class="slide slide-small slide-student" data-student="fanny">
           <div class="student-images">
-            <img class="student-img is-active" src="assets/images/fanny-1.png" alt="" />
+            <img class="student-img" src="assets/images/fanny-1.png" alt="" />
             <img class="student-img" src="assets/images/fanny-2.png" alt="" />
             <img class="student-img" src="assets/images/fanny-3.png" alt="" />
-            <div class="student-overlay"></div>
           </div>
+          <div class="student-overlay"></div>
           <div class="slide-label label-bottom-left">
             <div class="label-row"><div class="label-pad"></div><div class="label-content"><span class="label-text">Fanny Axnér</span></div><div class="label-cap"><img src="assets/vectors/ellipse-4.svg" alt="" /></div></div>
             <div class="label-sep"></div>
@@ -88,11 +88,11 @@
         <!-- Hilda -->
         <div class="slide slide-large slide-student" data-student="hilda">
           <div class="student-images">
-            <img class="student-img is-active" src="assets/images/hilda-1.png" alt="" />
+            <img class="student-img" src="assets/images/hilda-1.png" alt="" />
             <img class="student-img" src="assets/images/hilda-2.png" alt="" />
             <img class="student-img" src="assets/images/hilda-3.png" alt="" />
-            <div class="student-overlay"></div>
           </div>
+          <div class="student-overlay"></div>
           <div class="slide-label label-top-left">
             <div class="label-row"><div class="label-pad"></div><div class="label-content"><span class="label-text label-name">Hilda Landström Ferm</span></div><div class="label-cap"><img src="assets/vectors/ellipse-4.svg" alt="" /></div></div>
             <div class="label-sep"></div>
@@ -147,7 +147,6 @@
 
     const INTERVAL = 2000;
 
-    /* Clone slides for seamless loop */
     const track = document.getElementById('slideshow-track');
     const origSlides = [...track.children];
     origSlides.forEach(s => track.appendChild(s.cloneNode(true)));
@@ -157,7 +156,7 @@
     setWidth += origSlides.length * 16;
     track.style.setProperty('--set-width', setWidth + 'px');
 
-    /* Student hover — JS-driven to avoid CSS :hover flicker from animation */
+    /* Hover via JS — bulletproof against transform-animation flicker */
     document.querySelectorAll('.slide-student').forEach(slide => {
       slide.addEventListener('mouseenter', () => slide.classList.add('is-hovered'));
       slide.addEventListener('mouseleave', () => slide.classList.remove('is-hovered'));
@@ -174,25 +173,17 @@
       const nameLabel = slide.querySelector('.label-name');
       let current = 0;
 
+      imgs[0].style.opacity = '1';
+
       function showProject(idx) {
-        const prev = current;
         current = idx;
-
         imgs.forEach((img, i) => {
-          if (i === idx) {
-            img.style.zIndex = '2';
-            img.style.opacity = '1';
-          } else {
-            img.style.zIndex = '0';
-            img.style.opacity = '0';
-          }
+          img.style.opacity = i === idx ? '1' : '0';
         });
-
         projectLabel.textContent = data.projects[idx].title;
         if (nameLabel) nameLabel.textContent = data.projects[idx].name;
 
-        const dotsContainer = slide.querySelector('.label-dots');
-        [...dotsContainer.children].forEach((d, i) => {
+        [...slide.querySelector('.label-dots').children].forEach((d, i) => {
           if (i === idx) {
             d.className = 'dot-bar is-active';
             d.innerHTML = '<span class="dot-fill"></span>';
@@ -203,18 +194,43 @@
         });
       }
 
-      imgs.forEach((img, i) => {
-        img.style.transition = 'opacity 0.6s ease';
-        img.style.opacity = i === 0 ? '1' : '0';
-        img.style.zIndex = i === 0 ? '2' : '0';
-      });
-
       setTimeout(() => {
         setInterval(() => {
           showProject((current + 1) % data.projects.length);
         }, INTERVAL);
       }, Math.random() * INTERVAL);
     });
+
+    /* Compute exact translateX for shape card text hover (8px gap centered) */
+    function computeShapeHovers() {
+      document.querySelectorAll('.card-vk, .card-mode, .card-form').forEach(card => {
+        const label = card.querySelector('.bracket-label, .oval-label');
+        const hp = card.querySelector('.bracket-hp, .oval-hp');
+        if (!label || !hp) return;
+
+        const container = label.parentElement;
+        const containerW = container.offsetWidth;
+        const labelW = label.offsetWidth;
+        const hpW = hp.offsetWidth;
+
+        const totalContent = labelW + 8 + hpW;
+        const leftOffset = (containerW - totalContent) / 2;
+        const labelTarget = leftOffset;
+        const hpTarget = containerW - leftOffset - hpW;
+
+        const labelCurrent = label.offsetLeft;
+        const hpCurrent = hp.offsetLeft;
+
+        const labelDx = labelTarget - labelCurrent;
+        const hpDx = hpTarget - hpCurrent;
+
+        label.style.setProperty('--hover-dx', labelDx + 'px');
+        hp.style.setProperty('--hover-dx', hpDx + 'px');
+      });
+    }
+
+    computeShapeHovers();
+    window.addEventListener('resize', computeShapeHovers);
   </script>
 </body>
 </html>

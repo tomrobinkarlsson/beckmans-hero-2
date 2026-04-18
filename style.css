@@ -134,23 +134,29 @@ body {
 .slide-large { width: var(--slide-h); aspect-ratio: 1 / 1; }
 .slide-small { width: calc(var(--slide-h) * 320 / 432); }
 
-/* ─── Student image slides ─── */
+/* ══════════════════════════════════════════════
+   Student image slides
+   
+   z-stacking (bottom to top):
+   1. .student-images  (z-index: 0) — contains only <img> elements
+   2. .student-overlay  (z-index: 1) — dark hover overlay, SIBLING of images
+   3. .slide-label      (z-index: 2) — text labels, always on top
+   
+   This ensures the overlay never covers the label because they
+   share the same stacking context (.slide-student).
+   ══════════════════════════════════════════════ */
 
-.slide-student { overflow: hidden; }
+.slide-student {
+  overflow: hidden;
+  position: relative;
+}
 
 .student-images {
   position: absolute;
   inset: 0;
+  z-index: 0;
   transform-origin: center;
   transition: transform 0.5s ease;
-}
-
-.student-overlay {
-  position: absolute;
-  inset: -20%;
-  background: rgba(0, 0, 0, 0);
-  z-index: 1;
-  pointer-events: none;
 }
 
 .student-img {
@@ -163,9 +169,16 @@ body {
   transition: opacity 0.6s ease;
 }
 
-.student-img.is-active { opacity: 1; }
+.student-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0);
+  pointer-events: none;
+  transition: background 0.3s ease;
+}
 
-/* Hover via JS class — solid, no flicker */
+/* Hover: scale images, show overlay. Label stays above at z-index 2. */
 .slide-student.is-hovered .student-images {
   transform: scale(1.14);
 }
@@ -229,15 +242,7 @@ body {
   transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* ─── VK hover: color instant, text slides to center with 8px gap ─── */
-/* VK bracket-text area is ~154px wide (320 - 83 - 83).
-   Default: "visuell\nkommunikation" at left edge, "180hp" at right edge.
-   Hover: both move so there's 8px gap between them at center.
-   "visuell kommunikation" ~102px wide, "180hp" ~43px wide. Total ~153px.
-   Center pair = (154 - 102 - 8 - 43) / 2 = ~0.5px offset. Basically they're
-   already near-filling the space, so just a small nudge inward.
-   Figma: "180hp" moves from ml:213 to ml:174 = 39px leftward.  */
-
+/* VK hover: instant color, smooth text slide using JS-computed --hover-dx */
 .card-vk:hover .bracket-label,
 .card-vk:hover .bracket-hp {
   color: #fe5000;
@@ -247,12 +252,12 @@ body {
   filter: brightness(0) saturate(100%) invert(38%) sepia(96%) saturate(2574%) hue-rotate(11deg) brightness(102%) contrast(106%);
 }
 
-.card-vk:hover .bracket-hp {
-  transform: translateX(-39px);
+.card-vk:hover .bracket-label {
+  transform: translateX(var(--hover-dx, 0px));
 }
 
-.card-vk:hover .bracket-label {
-  text-align: right;
+.card-vk:hover .bracket-hp {
+  transform: translateX(var(--hover-dx, 0px));
 }
 
 /* ─── Form oval card ─── */
@@ -288,23 +293,17 @@ body {
   transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Form hover: instant orange, text to center with 8px gap.
-   Default: "form" at 64px, "180hp" right-edge at ~256px (from 213px left).
-   Card width: 320px. Padding: 64px each side = 192px usable.
-   "form" ~32px, "180hp" ~43px. Center pair in 192px:
-   offset = (192 - 32 - 8 - 43) / 2 = 54.5px from each side.
-   So "form" translateX(+54.5px), "180hp" translateX(-54.5px). */
-
+/* Form hover: instant color, smooth text */
 .card-form:hover .oval-bg {
   filter: brightness(0) saturate(100%) invert(38%) sepia(96%) saturate(2574%) hue-rotate(11deg) brightness(102%) contrast(106%);
 }
 
 .card-form:hover .oval-label {
-  transform: translateX(55px);
+  transform: translateX(var(--hover-dx, 0px));
 }
 
 .card-form:hover .oval-hp {
-  transform: translateX(-55px);
+  transform: translateX(var(--hover-dx, 0px));
 }
 
 /* ─── Mode card ─── */
@@ -324,14 +323,7 @@ body {
 .card-mode .card-brackets { height: calc(var(--slide-h) * 208 / 432); }
 .card-mode .card-brackets + .card-bottom { margin-top: calc(var(--slide-h) * 16 / 432); }
 
-/* Mode hover: instant orange, text to center with 8px gap.
-   Bracket-text area = 320 - 104 - 104 = 112px.
-   "mode" ~39px, "180hp" ~43px. Center pair:
-   offset = (112 - 39 - 8 - 43) / 2 = 11px from each side.
-   Default they fill the 112px spread. So translateX inward:
-   "mode": (112/2 - 39/2 - 4) = 32.5px right
-   "180hp": (112/2 - 43/2 - 4) = 30.5px left */
-
+/* Mode hover: instant color, smooth text via JS-computed --hover-dx */
 .card-mode:hover .mode-label,
 .card-mode:hover .mode-hp {
   color: #fe5000;
@@ -343,11 +335,11 @@ body {
 }
 
 .card-mode:hover .mode-label {
-  transform: translateX(33px);
+  transform: translateX(var(--hover-dx, 0px));
 }
 
 .card-mode:hover .mode-hp {
-  transform: translateX(-31px);
+  transform: translateX(var(--hover-dx, 0px));
 }
 
 /* ─── Labels ─── */
