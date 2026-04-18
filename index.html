@@ -160,8 +160,8 @@
           <div class="card-top card-brackets">
             <img class="bracket bracket-left" src="assets/vectors/subtract.svg" alt="" />
             <div class="bracket-text">
-              <span class="bracket-label">mode</span>
-              <span class="bracket-hp">180hp</span>
+              <span class="bracket-label mode-label">mode</span>
+              <span class="bracket-hp mode-hp">180hp</span>
             </div>
             <img class="bracket bracket-right" src="assets/vectors/subtract.svg" alt="" />
           </div>
@@ -215,7 +215,7 @@
     setWidth += origSlides.length * 16;
     track.style.setProperty('--set-width', setWidth + 'px');
 
-    /* Student slide pagination */
+    /* Student slide pagination — each student gets a random initial delay */
     document.querySelectorAll('.slide-student').forEach(slide => {
       const key = slide.dataset.student;
       const data = STUDENTS[key];
@@ -224,7 +224,6 @@
       const imgs = slide.querySelectorAll('.student-img');
       const projectLabel = slide.querySelector('.label-project');
       const nameLabel = slide.querySelector('.label-name');
-      const dots = slide.querySelectorAll('.label-dots > .dot, .label-dots > .dot-bar');
       let current = 0;
 
       function showProject(idx) {
@@ -232,27 +231,12 @@
         projectLabel.textContent = data.projects[idx].title;
         if (nameLabel) nameLabel.textContent = data.projects[idx].name;
 
-        dots.forEach((d, i) => {
-          d.classList.toggle('is-active', i === idx);
-          if (i === idx && d.classList.contains('dot-bar')) {
-            const fill = d.querySelector('.dot-fill');
-            if (fill) {
-              fill.style.animation = 'none';
-              fill.offsetHeight;
-              fill.style.animation = '';
-            }
-          }
-        });
-
-        /* swap dot-bar to active position */
         const dotsContainer = slide.querySelector('.label-dots');
         const allDots = [...dotsContainer.children];
         allDots.forEach((d, i) => {
           if (i === idx) {
             d.className = 'dot-bar is-active';
-            if (!d.querySelector('.dot-fill')) {
-              d.innerHTML = '<span class="dot-fill"></span>';
-            }
+            d.innerHTML = '<span class="dot-fill"></span>';
           } else {
             d.className = 'dot';
             d.innerHTML = '';
@@ -262,10 +246,13 @@
 
       showProject(0);
 
-      setInterval(() => {
-        current = (current + 1) % data.projects.length;
-        showProject(current);
-      }, INTERVAL);
+      const randomDelay = Math.random() * INTERVAL;
+      setTimeout(() => {
+        setInterval(() => {
+          current = (current + 1) % data.projects.length;
+          showProject(current);
+        }, INTERVAL);
+      }, randomDelay);
     });
   </script>
 </body>

@@ -110,7 +110,7 @@ body {
 
 .slideshow {
   position: absolute;
-  bottom: 0;
+  bottom: 16px;
   left: 0;
   right: 0;
   height: var(--slide-h);
@@ -168,6 +168,31 @@ body {
 }
 
 .student-img.is-active { opacity: 1; }
+
+/* Student hover: scale image up + dark overlay */
+.slide-student .student-images::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.4s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.slide-student .student-img {
+  transition: opacity 0.6s ease, transform 0.5s ease;
+  transform: scale(1);
+  transform-origin: center;
+}
+
+.slide-student:hover .student-img {
+  transform: scale(1.28);
+}
+
+.slide-student:hover .student-images::after {
+  background: rgba(0, 0, 0, 0.8);
+}
 
 /* ─── Split cards ─── */
 
@@ -284,6 +309,20 @@ body {
 
 .card-mode .card-brackets + .card-bottom {
   margin-top: calc(var(--slide-h) * 16 / 432);
+}
+
+/* Mode hover: text animates inward toward center */
+.card-mode .mode-label,
+.card-mode .mode-hp {
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card-mode:hover .mode-label {
+  transform: translateX(50%);
+}
+
+.card-mode:hover .mode-hp {
+  transform: translateX(-50%);
 }
 
 /* ─── Labels ─── */
