@@ -290,7 +290,7 @@ body {
 }
 
 .card-vk:hover .bracket {
-  filter: brightness(0) saturate(100%) invert(38%) sepia(96%) saturate(2574%) hue-rotate(11deg) brightness(102%) contrast(106%);
+  --fill-0: #fe5000;
 }
 
 .card-vk:hover .vk-visuell {
@@ -336,7 +336,7 @@ body {
 
 /* Form hover: instant color, smooth text */
 .card-form:hover .oval-bg {
-  filter: brightness(0) saturate(100%) invert(38%) sepia(96%) saturate(2574%) hue-rotate(11deg) brightness(102%) contrast(106%);
+  --fill-0: #fe5000;
 }
 
 .card-form:hover .oval-label {
@@ -364,7 +364,11 @@ body {
 .card-mode .card-brackets { height: calc(var(--slide-h) * 208 / 432); }
 .card-mode .card-brackets + .card-bottom { margin-top: calc(var(--slide-h) * 16 / 432); }
 
-/* Mode hover: instant color, smooth text via JS-computed --hover-dx */
+/* Mode hover: instant orange bg + shapes + text */
+.card-mode:hover .card-brackets {
+  background: #fe5000;
+}
+
 .card-mode:hover .mode-label,
 .card-mode:hover .mode-hp {
   color: #fe5000;
@@ -372,7 +376,7 @@ body {
 
 .card-mode:hover .bracket-left,
 .card-mode:hover .bracket-right {
-  filter: brightness(0) saturate(100%) invert(38%) sepia(96%) saturate(2574%) hue-rotate(11deg) brightness(102%) contrast(106%);
+  --fill-0: #fe5000;
 }
 
 .card-mode:hover .mode-label {
