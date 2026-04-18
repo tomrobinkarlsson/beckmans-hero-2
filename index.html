@@ -26,7 +26,7 @@
     <div class="slideshow">
       <div class="slideshow-track" id="slideshow-track">
 
-        <!-- Eliot: 432x432, label center-left, 3 projects -->
+        <!-- Eliot: 432x432, label center-left -->
         <div class="slide slide-large slide-student" data-student="eliot">
           <div class="student-images">
             <img class="student-img is-active" src="assets/images/eliot-1.png" alt="" />
@@ -60,8 +60,8 @@
           </div>
         </div>
 
-        <!-- visuell kommunikation card 320x432 -->
-        <div class="slide slide-small">
+        <!-- visuell kommunikation card -->
+        <div class="slide slide-small card-vk">
           <div class="card-top card-brackets">
             <img class="bracket bracket-left" src="assets/vectors/union-stroke.svg" alt="" />
             <div class="bracket-text">
@@ -75,7 +75,7 @@
           </div>
         </div>
 
-        <!-- Fanny: 320x432, label bottom-left, 3 projects -->
+        <!-- Fanny: 320x432, label bottom-left -->
         <div class="slide slide-small slide-student" data-student="fanny">
           <div class="student-images">
             <img class="student-img is-active" src="assets/images/fanny-1.png" alt="" />
@@ -109,19 +109,21 @@
           </div>
         </div>
 
-        <!-- Ocean + oval card 320x432 -->
-        <div class="slide slide-small">
+        <!-- Ocean + form oval card -->
+        <div class="slide slide-small card-form">
           <div class="card-top card-image">
             <img src="assets/images/ocean-1.png" alt="" />
           </div>
           <div class="card-bottom card-oval">
             <img class="oval-bg" src="assets/vectors/union.svg" alt="" />
-            <span class="oval-label">form</span>
-            <span class="oval-hp">180hp</span>
+            <div class="oval-text">
+              <span class="oval-label">form</span>
+              <span class="oval-hp">180hp</span>
+            </div>
           </div>
         </div>
 
-        <!-- Hilda: 432x432, label top-left, 3 projects -->
+        <!-- Hilda: 432x432, label top-left -->
         <div class="slide slide-large slide-student" data-student="hilda">
           <div class="student-images">
             <img class="student-img is-active" src="assets/images/hilda-1.png" alt="" />
@@ -155,7 +157,7 @@
           </div>
         </div>
 
-        <!-- Mode brackets card 320x432 -->
+        <!-- Mode brackets card -->
         <div class="slide slide-small card-mode">
           <div class="card-top card-brackets">
             <img class="bracket bracket-left" src="assets/vectors/subtract.svg" alt="" />
@@ -176,7 +178,6 @@
   </section>
 
   <script>
-    /* Student project data */
     const STUDENTS = {
       eliot: {
         projects: [
@@ -215,19 +216,38 @@
     setWidth += origSlides.length * 16;
     track.style.setProperty('--set-width', setWidth + 'px');
 
-    /* Student slide pagination — each student gets a random initial delay */
+    /* Student slide pagination */
     document.querySelectorAll('.slide-student').forEach(slide => {
       const key = slide.dataset.student;
       const data = STUDENTS[key];
       if (!data) return;
 
-      const imgs = slide.querySelectorAll('.student-img');
+      const imgs = [...slide.querySelectorAll('.student-img')];
       const projectLabel = slide.querySelector('.label-project');
       const nameLabel = slide.querySelector('.label-name');
       let current = 0;
+      let next = null;
 
       function showProject(idx) {
-        imgs.forEach((img, i) => img.classList.toggle('is-active', i === idx));
+        /* Cross-fade: set next image visible immediately behind current,
+           then fade current out so next shows through */
+        const prevIdx = current;
+        current = idx;
+
+        /* Make all images hidden except previous (still showing) and next */
+        imgs.forEach((img, i) => {
+          if (i === idx) {
+            img.style.opacity = '1';
+            img.style.zIndex = '1';
+          } else if (i === prevIdx) {
+            img.style.opacity = '0';
+            img.style.zIndex = '0';
+          } else {
+            img.style.opacity = '0';
+            img.style.zIndex = '0';
+          }
+        });
+
         projectLabel.textContent = data.projects[idx].title;
         if (nameLabel) nameLabel.textContent = data.projects[idx].name;
 
@@ -244,13 +264,18 @@
         });
       }
 
-      showProject(0);
+      /* Init first image */
+      imgs.forEach((img, i) => {
+        img.style.transition = 'opacity 0.6s ease';
+        img.style.opacity = i === 0 ? '1' : '0';
+        img.style.zIndex = i === 0 ? '1' : '0';
+      });
 
       const randomDelay = Math.random() * INTERVAL;
       setTimeout(() => {
         setInterval(() => {
-          current = (current + 1) % data.projects.length;
-          showProject(current);
+          const nextIdx = (current + 1) % data.projects.length;
+          showProject(nextIdx);
         }, INTERVAL);
       }, randomDelay);
     });

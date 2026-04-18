@@ -151,11 +151,26 @@ body {
 
 /* ─── Student image slides ─── */
 
-.slide-student { overflow: hidden; }
+.slide-student {
+  overflow: hidden;
+}
 
 .student-images {
   position: absolute;
   inset: 0;
+  transform: scale(1);
+  transform-origin: center;
+  will-change: transform;
+  transition: transform 0.5s ease;
+}
+
+.student-images::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: rgba(0, 0, 0, 0);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .student-img {
@@ -165,28 +180,14 @@ body {
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.6s ease;
+  will-change: opacity;
 }
 
-.student-img.is-active { opacity: 1; }
-
-/* Student hover: scale image up + dark overlay */
-.slide-student .student-images {
-  transition: transform 0.5s ease;
-  transform: scale(1);
-  transform-origin: center;
+.student-img.is-active {
+  opacity: 1;
 }
 
-.slide-student .student-images::after {
-  content: "";
-  position: absolute;
-  inset: -15%;
-  background: rgba(0, 0, 0, 0);
-  transition: background 0.4s ease;
-  z-index: 1;
-  pointer-events: none;
-}
-
+/* Hover: scale container + dark overlay — instant color, smooth scale */
 .slide-student:hover .student-images {
   transform: scale(1.14);
 }
@@ -206,7 +207,8 @@ body {
   display: block;
 }
 
-/* Brackets (visuell kommunikation) */
+/* ─── Brackets (visuell kommunikation) ─── */
+
 .card-brackets {
   height: calc(var(--slide-h) * 200 / 432);
   position: relative;
@@ -244,30 +246,25 @@ body {
   line-height: 1.05;
   letter-spacing: -0.02em;
   text-transform: lowercase;
-  transition: color 0.3s ease;
 }
 
 .bracket-hp {
   font-size: 16px;
   letter-spacing: -0.02em;
-  transition: color 0.3s ease;
 }
 
-/* Visuell kommunikation hover: stroke + text turn orange */
-.slide-small:not(.card-mode) > .card-brackets .bracket {
-  transition: filter 0.3s ease;
-}
-
-.slide-small:not(.card-mode):hover > .card-brackets .bracket-label,
-.slide-small:not(.card-mode):hover > .card-brackets .bracket-hp {
+/* Visuell kommunikation hover: instant orange on strokes + text */
+.card-vk:hover .bracket-label,
+.card-vk:hover .bracket-hp {
   color: #fe5000;
 }
 
-.slide-small:not(.card-mode):hover > .card-brackets .bracket {
+.card-vk:hover .bracket {
   filter: brightness(0) saturate(100%) invert(38%) sepia(96%) saturate(2574%) hue-rotate(11deg) brightness(102%) contrast(106%);
 }
 
-/* Ocean + oval card */
+/* ─── Ocean + oval card (form) ─── */
+
 .card-image {
   height: calc(var(--slide-h) * 208 / 432);
 }
@@ -283,10 +280,6 @@ body {
   height: calc(var(--slide-h) * 208 / 432);
   position: relative;
   background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 calc(var(--slide-h) * 64 / 432);
   margin-top: calc(var(--slide-h) * 16 / 432);
   overflow: visible;
 }
@@ -298,34 +291,41 @@ body {
   height: 100%;
 }
 
+.oval-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 1;
+}
+
 .oval-label,
 .oval-hp {
-  position: relative;
-  z-index: 1;
   font-size: 16px;
   letter-spacing: -0.02em;
   color: #fff;
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.oval-bg {
-  transition: filter 0.3s ease;
+/* Default: text spread apart */
+.oval-text {
+  justify-content: space-between;
+  padding: 0 calc(var(--slide-h) * 64 / 432);
 }
 
-/* Form oval hover: orange fill + text moves inward */
-.card-oval:hover .oval-bg {
+/* Form hover: instant orange fill, text centers with 8px gap */
+.card-form:hover .oval-bg {
   filter: brightness(0) saturate(100%) invert(38%) sepia(96%) saturate(2574%) hue-rotate(11deg) brightness(102%) contrast(106%);
 }
 
-.card-oval:hover .oval-label {
-  transform: translateX(60px);
+.card-form:hover .oval-text {
+  justify-content: center;
+  padding: 0;
 }
 
-.card-oval:hover .oval-hp {
-  transform: translateX(-49px);
-}
+/* ─── Mode card ─── */
 
-/* Mode card — filled arch shapes */
 .card-mode .bracket-left {
   width: calc(var(--slide-h) * 104 / 432);
   height: calc(var(--slide-h) * 208 / 432);
@@ -346,34 +346,25 @@ body {
   margin-top: calc(var(--slide-h) * 16 / 432);
 }
 
-/* Mode hover: text animates inward + orange color */
-.card-mode .mode-label,
-.card-mode .mode-hp {
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.3s ease;
+/* Mode default: text spread apart */
+.card-mode .bracket-text {
+  justify-content: space-between;
 }
 
-.card-mode .bracket-left,
-.card-mode .bracket-right {
-  transition: --fill-0 0.3s ease;
-}
-
-.card-mode:hover .mode-label {
-  transform: translateX(47px);
-  color: #fe5000;
-}
-
+/* Mode hover: instant orange color, text centers with 8px gap */
+.card-mode:hover .mode-label,
 .card-mode:hover .mode-hp {
-  transform: translateX(-43px);
   color: #fe5000;
-}
-
-.card-mode:hover {
-  --fill-0: #fe5000;
 }
 
 .card-mode:hover .bracket-left,
 .card-mode:hover .bracket-right {
   filter: brightness(0) saturate(100%) invert(38%) sepia(96%) saturate(2574%) hue-rotate(11deg) brightness(102%) contrast(106%);
+}
+
+.card-mode:hover .bracket-text {
+  justify-content: center;
+  gap: 8px;
 }
 
 /* ─── Labels ─── */
