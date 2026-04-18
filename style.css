@@ -84,7 +84,7 @@ body {
 .headline-left,
 .headline-right {
   position: absolute;
-  font-size: clamp(32px, 3.6vw, 52px);
+  font-size: clamp(36px, 4.6vw, 67px);
   line-height: 1.28;
   letter-spacing: -0.02em;
   text-transform: lowercase;
@@ -258,7 +258,32 @@ body {
   transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* VK hover: instant color, smooth text slide using JS-computed --hover-dx */
+/* VK: two-line layout — "visuell  180hp" on top, "kommunikation" below */
+.card-vk .bracket-text {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.vk-top-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.vk-visuell {
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.vk-hp {
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.vk-komm {
+  transition: none;
+}
+
+/* VK hover: instant color, "visuell" and "180hp" slide toward center with 8px gap */
 .card-vk:hover .bracket-label,
 .card-vk:hover .bracket-hp {
   color: #fe5000;
@@ -268,11 +293,11 @@ body {
   filter: brightness(0) saturate(100%) invert(38%) sepia(96%) saturate(2574%) hue-rotate(11deg) brightness(102%) contrast(106%);
 }
 
-.card-vk:hover .bracket-label {
+.card-vk:hover .vk-visuell {
   transform: translateX(var(--hover-dx, 0px));
 }
 
-.card-vk:hover .bracket-hp {
+.card-vk:hover .vk-hp {
   transform: translateX(var(--hover-dx, 0px));
 }
 

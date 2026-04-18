@@ -48,8 +48,11 @@
           <div class="card-top card-brackets">
             <img class="bracket bracket-left" src="assets/vectors/union-stroke.svg" alt="" />
             <div class="bracket-text">
-              <span class="bracket-label">visuell<br>kommunikation</span>
-              <span class="bracket-hp">180hp</span>
+              <div class="vk-top-line">
+                <span class="bracket-label vk-visuell">visuell</span>
+                <span class="bracket-hp vk-hp">180hp</span>
+              </div>
+              <span class="bracket-label vk-komm">kommunikation</span>
             </div>
             <img class="bracket bracket-right" src="assets/vectors/union-stroke.svg" alt="" />
           </div>
@@ -228,9 +231,10 @@
 
     /* Compute exact translateX for shape card text hover (8px gap centered) */
     function computeShapeHovers() {
-      document.querySelectorAll('.card-vk, .card-mode, .card-form').forEach(card => {
-        const label = card.querySelector('.bracket-label, .oval-label');
-        const hp = card.querySelector('.bracket-hp, .oval-hp');
+      /* Mode + Form: label and hp in same flex row */
+      document.querySelectorAll('.card-mode, .card-form').forEach(card => {
+        const label = card.querySelector('.mode-label, .oval-label');
+        const hp = card.querySelector('.mode-hp, .oval-hp');
         if (!label || !hp) return;
 
         const container = label.parentElement;
@@ -240,16 +244,32 @@
 
         const totalContent = labelW + 8 + hpW;
         const leftOffset = (containerW - totalContent) / 2;
-        const labelTarget = leftOffset;
-        const hpTarget = containerW - leftOffset - hpW;
 
-        const labelCurrent = label.offsetLeft;
-        const hpCurrent = hp.offsetLeft;
-
-        const labelDx = labelTarget - labelCurrent;
-        const hpDx = hpTarget - hpCurrent;
+        const labelDx = leftOffset - label.offsetLeft;
+        const hpDx = (containerW - leftOffset - hpW) - hp.offsetLeft;
 
         label.style.setProperty('--hover-dx', labelDx + 'px');
+        hp.style.setProperty('--hover-dx', hpDx + 'px');
+      });
+
+      /* VK: "visuell" and "180hp" on the top line move toward center with 8px gap */
+      document.querySelectorAll('.card-vk').forEach(card => {
+        const visuell = card.querySelector('.vk-visuell');
+        const hp = card.querySelector('.vk-hp');
+        if (!visuell || !hp) return;
+
+        const topLine = visuell.parentElement;
+        const lineW = topLine.offsetWidth;
+        const visuellW = visuell.offsetWidth;
+        const hpW = hp.offsetWidth;
+
+        const totalContent = visuellW + 8 + hpW;
+        const leftOffset = (lineW - totalContent) / 2;
+
+        const visuellDx = leftOffset - visuell.offsetLeft;
+        const hpDx = (lineW - leftOffset - hpW) - hp.offsetLeft;
+
+        visuell.style.setProperty('--hover-dx', visuellDx + 'px');
         hp.style.setProperty('--hover-dx', hpDx + 'px');
       });
     }
