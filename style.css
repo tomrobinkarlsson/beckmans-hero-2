@@ -361,21 +361,13 @@ body {
   transform: scaleX(-1);
 }
 
-.card-mode .card-brackets {
-  height: calc(var(--slide-h) * 208 / 432);
-  background: #3C3C3C;
-}
-
+.card-mode .card-brackets { height: calc(var(--slide-h) * 208 / 432); }
 .card-mode .card-brackets + .card-bottom { margin-top: calc(var(--slide-h) * 16 / 432); }
 
-.card-mode .bracket-left,
-.card-mode .bracket-right {
-  color: #000;
-}
-
-/* Mode hover: bg turns orange, shapes stay black, text turns orange */
-.card-mode:hover .card-brackets {
-  background: #fe5000;
+/* Mode hover: shapes and text turn orange */
+.card-mode:hover .bracket-left,
+.card-mode:hover .bracket-right {
+  color: #fe5000;
 }
 
 .card-mode:hover .mode-label,
