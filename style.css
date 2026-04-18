@@ -290,7 +290,7 @@ body {
 }
 
 .card-vk:hover .bracket {
-  --fill-0: #fe5000;
+  color: #fe5000;
 }
 
 .card-vk:hover .vk-visuell {
@@ -314,7 +314,7 @@ body {
   overflow: visible;
 }
 
-.oval-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.oval-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; color: #000; }
 
 .oval-text {
   position: absolute;
@@ -336,7 +336,7 @@ body {
 
 /* Form hover: instant color, smooth text */
 .card-form:hover .oval-bg {
-  --fill-0: #fe5000;
+  color: #fe5000;
 }
 
 .card-form:hover .oval-label {
@@ -361,13 +361,21 @@ body {
   transform: scaleX(-1);
 }
 
-.card-mode .card-brackets { height: calc(var(--slide-h) * 208 / 432); }
+.card-mode .card-brackets {
+  height: calc(var(--slide-h) * 208 / 432);
+  background: #000;
+}
+
 .card-mode .card-brackets + .card-bottom { margin-top: calc(var(--slide-h) * 16 / 432); }
 
-/* Mode hover: shapes turn orange, text turns orange, text slides inward */
-.card-mode:hover .bracket-left,
-.card-mode:hover .bracket-right {
-  --fill-0: #fe5000;
+.card-mode .bracket-left,
+.card-mode .bracket-right {
+  color: #3C3C3C;
+}
+
+/* Mode hover: bg turns orange, shapes stay dark grey, text turns orange */
+.card-mode:hover .card-brackets {
+  background: #fe5000;
 }
 
 .card-mode:hover .mode-label,
