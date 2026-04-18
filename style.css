@@ -361,10 +361,19 @@ body {
   transform: scaleX(-1);
 }
 
-.card-mode .card-brackets { height: calc(var(--slide-h) * 208 / 432); }
+.card-mode .card-brackets {
+  height: calc(var(--slide-h) * 208 / 432);
+  background: #000;
+}
+
 .card-mode .card-brackets + .card-bottom { margin-top: calc(var(--slide-h) * 16 / 432); }
 
-/* Mode hover: instant orange bg + shapes + text */
+.card-mode .bracket-left,
+.card-mode .bracket-right {
+  --fill-0: #3C3C3C;
+}
+
+/* Mode hover: background turns orange, text turns orange, shapes stay dark grey */
 .card-mode:hover .card-brackets {
   background: #fe5000;
 }
@@ -372,11 +381,6 @@ body {
 .card-mode:hover .mode-label,
 .card-mode:hover .mode-hp {
   color: #fe5000;
-}
-
-.card-mode:hover .bracket-left,
-.card-mode:hover .bracket-right {
-  --fill-0: #fe5000;
 }
 
 .card-mode:hover .mode-label {
