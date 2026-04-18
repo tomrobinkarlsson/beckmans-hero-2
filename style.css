@@ -136,27 +136,37 @@ body {
 
 /* ══════════════════════════════════════════════
    Student image slides
-   
-   z-stacking (bottom to top):
-   1. .student-images  (z-index: 0) — contains only <img> elements
-   2. .student-overlay  (z-index: 1) — dark hover overlay, SIBLING of images
-   3. .slide-label      (z-index: 2) — text labels, always on top
-   
-   This ensures the overlay never covers the label because they
-   share the same stacking context (.slide-student).
+
+   Architecture:
+   .slide-student          — stacking context root (z-index: auto, overflow: hidden)
+     .student-images       — image container, receives scale transform on hover
+       .student-img x3     — crossfade via opacity
+     .student-overlay      — 80% black on hover, always covers full slide bounds
+     .slide-label          — name, project, dots — always visible on top
+
+   The key insight: .student-images scales but .student-overlay does NOT.
+   The overlay covers the original slide area. overflow:hidden on the
+   parent clips the scaled images. The overlay sits between images and
+   label in paint order via z-index.
+
+   Every layer that could be GPU-composited gets will-change to prevent
+   the browser from collapsing layers and causing paint-order glitches.
    ══════════════════════════════════════════════ */
 
 .slide-student {
   overflow: hidden;
   position: relative;
+  isolation: isolate;
 }
 
 .student-images {
   position: absolute;
   inset: 0;
   z-index: 0;
+  transform: scale(1);
   transform-origin: center;
-  transition: transform 0.5s ease;
+  will-change: transform;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .student-img {
@@ -166,25 +176,31 @@ body {
   height: 100%;
   object-fit: cover;
   opacity: 0;
+  will-change: opacity;
   transition: opacity 0.6s ease;
+}
+
+.student-img.is-active {
+  opacity: 1;
 }
 
 .student-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: rgba(0, 0, 0, 0);
+  will-change: opacity;
+  background: #000;
+  opacity: 0;
   pointer-events: none;
-  transition: background 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
-/* Hover: scale images, show overlay. Label stays above at z-index 2. */
 .slide-student.is-hovered .student-images {
   transform: scale(1.14);
 }
 
 .slide-student.is-hovered .student-overlay {
-  background: rgba(0, 0, 0, 0.8);
+  opacity: 0.8;
 }
 
 /* ─── Split cards ─── */
@@ -350,6 +366,7 @@ body {
   display: flex;
   flex-direction: column;
   z-index: 2;
+  will-change: transform;
 }
 
 .label-center-left { top: 50%; transform: translateY(-50%); }

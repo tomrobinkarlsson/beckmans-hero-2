@@ -29,7 +29,7 @@
         <!-- Eliot -->
         <div class="slide slide-large slide-student" data-student="eliot">
           <div class="student-images">
-            <img class="student-img" src="assets/images/eliot-1.png" alt="" />
+            <img class="student-img is-active" src="assets/images/eliot-1.png" alt="" />
             <img class="student-img" src="assets/images/eliot-2.png" alt="" />
             <img class="student-img" src="assets/images/eliot-3.png" alt="" />
           </div>
@@ -59,7 +59,7 @@
         <!-- Fanny -->
         <div class="slide slide-small slide-student" data-student="fanny">
           <div class="student-images">
-            <img class="student-img" src="assets/images/fanny-1.png" alt="" />
+            <img class="student-img is-active" src="assets/images/fanny-1.png" alt="" />
             <img class="student-img" src="assets/images/fanny-2.png" alt="" />
             <img class="student-img" src="assets/images/fanny-3.png" alt="" />
           </div>
@@ -88,7 +88,7 @@
         <!-- Hilda -->
         <div class="slide slide-large slide-student" data-student="hilda">
           <div class="student-images">
-            <img class="student-img" src="assets/images/hilda-1.png" alt="" />
+            <img class="student-img is-active" src="assets/images/hilda-1.png" alt="" />
             <img class="student-img" src="assets/images/hilda-2.png" alt="" />
             <img class="student-img" src="assets/images/hilda-3.png" alt="" />
           </div>
@@ -156,13 +156,18 @@
     setWidth += origSlides.length * 16;
     track.style.setProperty('--set-width', setWidth + 'px');
 
-    /* Hover via JS — bulletproof against transform-animation flicker */
-    document.querySelectorAll('.slide-student').forEach(slide => {
-      slide.addEventListener('mouseenter', () => slide.classList.add('is-hovered'));
-      slide.addEventListener('mouseleave', () => slide.classList.remove('is-hovered'));
-    });
+    /* ────────────────────────────────────────────────
+       Student slide controller
+       
+       Hover: managed via JS mouseenter/mouseleave to
+       avoid CSS :hover flicker from the slideshow's
+       continuous translateX animation.
+       
+       Pagination: each slide runs independently with
+       a random start offset. Only CSS classes are used
+       to toggle image visibility — no inline styles.
+       ──────────────────────────────────────────────── */
 
-    /* Student pagination */
     document.querySelectorAll('.slide-student').forEach(slide => {
       const key = slide.dataset.student;
       const data = STUDENTS[key];
@@ -171,19 +176,37 @@
       const imgs = [...slide.querySelectorAll('.student-img')];
       const projectLabel = slide.querySelector('.label-project');
       const nameLabel = slide.querySelector('.label-name');
+      const dotsContainer = slide.querySelector('.label-dots');
       let current = 0;
 
-      imgs[0].style.opacity = '1';
+      /* Set first image visible */
+      imgs[0].classList.add('is-active');
 
+      /* Hover: toggle class on the slide */
+      slide.addEventListener('mouseenter', () => {
+        slide.classList.add('is-hovered');
+      });
+      slide.addEventListener('mouseleave', () => {
+        slide.classList.remove('is-hovered');
+      });
+
+      /* Advance to next project */
       function showProject(idx) {
         current = idx;
+
         imgs.forEach((img, i) => {
-          img.style.opacity = i === idx ? '1' : '0';
+          if (i === idx) {
+            img.classList.add('is-active');
+          } else {
+            img.classList.remove('is-active');
+          }
         });
+
         projectLabel.textContent = data.projects[idx].title;
         if (nameLabel) nameLabel.textContent = data.projects[idx].name;
 
-        [...slide.querySelector('.label-dots').children].forEach((d, i) => {
+        const dots = [...dotsContainer.children];
+        dots.forEach((d, i) => {
           if (i === idx) {
             d.className = 'dot-bar is-active';
             d.innerHTML = '<span class="dot-fill"></span>';
@@ -194,11 +217,13 @@
         });
       }
 
+      /* Start pagination with random offset so slides don't sync */
+      const randomDelay = Math.floor(Math.random() * INTERVAL);
       setTimeout(() => {
         setInterval(() => {
           showProject((current + 1) % data.projects.length);
         }, INTERVAL);
-      }, Math.random() * INTERVAL);
+      }, randomDelay);
     });
 
     /* Compute exact translateX for shape card text hover (8px gap centered) */
