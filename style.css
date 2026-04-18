@@ -24,8 +24,6 @@ body {
   overflow: hidden;
 }
 
-/* ─── Hero container ─── */
-
 .hero {
   width: 100vw;
   height: 100dvh;
@@ -38,19 +36,14 @@ body {
 
 .top-nav {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 0; right: 0;
   top: 22.5px;
   height: 16px;
   z-index: 3;
   pointer-events: none;
 }
 
-.nav-fixed {
-  position: absolute;
-  top: 0;
-  white-space: nowrap;
-}
+.nav-fixed { position: absolute; top: 0; white-space: nowrap; }
 
 .brand {
   font-size: 16px;
@@ -83,8 +76,7 @@ body {
 .headlines {
   position: absolute;
   top: 25%;
-  left: 0;
-  right: 0;
+  left: 0; right: 0;
   z-index: 2;
   pointer-events: none;
 }
@@ -101,7 +93,7 @@ body {
 .headline-left { left: 14px; }
 .headline-right { right: 56px; }
 
-/* ─── Slideshow — bottom-aligned, viewport-scaled ─── */
+/* ─── Slideshow ─── */
 
 :root {
   --slide-h: clamp(300px, 54dvh, 54dvh);
@@ -111,8 +103,7 @@ body {
 .slideshow {
   position: absolute;
   bottom: 16px;
-  left: 0;
-  right: 0;
+  left: 0; right: 0;
   height: var(--slide-h);
   overflow: hidden;
   z-index: 1;
@@ -130,7 +121,7 @@ body {
   to { transform: translateX(calc(-1 * var(--set-width))); }
 }
 
-/* ─── Slide items ─── */
+/* ─── Slides ─── */
 
 .slide {
   flex-shrink: 0;
@@ -140,32 +131,21 @@ body {
   cursor: pointer;
 }
 
-.slide-large {
-  width: var(--slide-h);
-  aspect-ratio: 1 / 1;
-}
-
-.slide-small {
-  width: calc(var(--slide-h) * 320 / 432);
-}
+.slide-large { width: var(--slide-h); aspect-ratio: 1 / 1; }
+.slide-small { width: calc(var(--slide-h) * 320 / 432); }
 
 /* ─── Student image slides ─── */
 
-.slide-student {
-  overflow: hidden;
-}
+.slide-student { overflow: hidden; }
 
 .student-images {
   position: absolute;
   inset: 0;
-  transform: scale(1);
   transform-origin: center;
-  will-change: transform;
   transition: transform 0.5s ease;
 }
 
-.student-images::after {
-  content: "";
+.student-overlay {
   position: absolute;
   inset: -20%;
   background: rgba(0, 0, 0, 0);
@@ -180,19 +160,17 @@ body {
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  will-change: opacity;
+  transition: opacity 0.6s ease;
 }
 
-.student-img.is-active {
-  opacity: 1;
-}
+.student-img.is-active { opacity: 1; }
 
-/* Hover: scale container + dark overlay — instant color, smooth scale */
-.slide-student:hover .student-images {
+/* Hover via JS class — solid, no flicker */
+.slide-student.is-hovered .student-images {
   transform: scale(1.14);
 }
 
-.slide-student:hover .student-images::after {
+.slide-student.is-hovered .student-overlay {
   background: rgba(0, 0, 0, 0.8);
 }
 
@@ -200,14 +178,9 @@ body {
 
 .card-top { width: 100%; overflow: hidden; }
 .card-bottom { width: 100%; overflow: hidden; }
-.card-bottom > img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
+.card-bottom > img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* ─── Brackets (visuell kommunikation) ─── */
+/* ─── Bracket cards ─── */
 
 .card-brackets {
   height: calc(var(--slide-h) * 200 / 432);
@@ -239,6 +212,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 .bracket-label {
@@ -246,14 +220,24 @@ body {
   line-height: 1.05;
   letter-spacing: -0.02em;
   text-transform: lowercase;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .bracket-hp {
   font-size: 16px;
   letter-spacing: -0.02em;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Visuell kommunikation hover: instant orange on strokes + text */
+/* ─── VK hover: color instant, text slides to center with 8px gap ─── */
+/* VK bracket-text area is ~154px wide (320 - 83 - 83).
+   Default: "visuell\nkommunikation" at left edge, "180hp" at right edge.
+   Hover: both move so there's 8px gap between them at center.
+   "visuell kommunikation" ~102px wide, "180hp" ~43px wide. Total ~153px.
+   Center pair = (154 - 102 - 8 - 43) / 2 = ~0.5px offset. Basically they're
+   already near-filling the space, so just a small nudge inward.
+   Figma: "180hp" moves from ml:213 to ml:174 = 39px leftward.  */
+
 .card-vk:hover .bracket-label,
 .card-vk:hover .bracket-hp {
   color: #fe5000;
@@ -263,18 +247,18 @@ body {
   filter: brightness(0) saturate(100%) invert(38%) sepia(96%) saturate(2574%) hue-rotate(11deg) brightness(102%) contrast(106%);
 }
 
-/* ─── Ocean + oval card (form) ─── */
-
-.card-image {
-  height: calc(var(--slide-h) * 208 / 432);
+.card-vk:hover .bracket-hp {
+  transform: translateX(-39px);
 }
 
-.card-image > img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.card-vk:hover .bracket-label {
+  text-align: right;
 }
+
+/* ─── Form oval card ─── */
+
+.card-image { height: calc(var(--slide-h) * 208 / 432); }
+.card-image > img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .card-oval {
   height: calc(var(--slide-h) * 208 / 432);
@@ -284,20 +268,15 @@ body {
   overflow: visible;
 }
 
-.oval-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
+.oval-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 .oval-text {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: space-between;
+  padding: 0 calc(var(--slide-h) * 64 / 432);
   z-index: 1;
 }
 
@@ -306,22 +285,26 @@ body {
   font-size: 16px;
   letter-spacing: -0.02em;
   color: #fff;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Default: text spread apart */
-.oval-text {
-  justify-content: space-between;
-  padding: 0 calc(var(--slide-h) * 64 / 432);
-}
+/* Form hover: instant orange, text to center with 8px gap.
+   Default: "form" at 64px, "180hp" right-edge at ~256px (from 213px left).
+   Card width: 320px. Padding: 64px each side = 192px usable.
+   "form" ~32px, "180hp" ~43px. Center pair in 192px:
+   offset = (192 - 32 - 8 - 43) / 2 = 54.5px from each side.
+   So "form" translateX(+54.5px), "180hp" translateX(-54.5px). */
 
-/* Form hover: instant orange fill, text centers with 8px gap */
 .card-form:hover .oval-bg {
   filter: brightness(0) saturate(100%) invert(38%) sepia(96%) saturate(2574%) hue-rotate(11deg) brightness(102%) contrast(106%);
 }
 
-.card-form:hover .oval-text {
-  justify-content: center;
-  padding: 0;
+.card-form:hover .oval-label {
+  transform: translateX(55px);
+}
+
+.card-form:hover .oval-hp {
+  transform: translateX(-55px);
 }
 
 /* ─── Mode card ─── */
@@ -338,20 +321,17 @@ body {
   transform: scaleX(-1);
 }
 
-.card-mode .card-brackets {
-  height: calc(var(--slide-h) * 208 / 432);
-}
+.card-mode .card-brackets { height: calc(var(--slide-h) * 208 / 432); }
+.card-mode .card-brackets + .card-bottom { margin-top: calc(var(--slide-h) * 16 / 432); }
 
-.card-mode .card-brackets + .card-bottom {
-  margin-top: calc(var(--slide-h) * 16 / 432);
-}
+/* Mode hover: instant orange, text to center with 8px gap.
+   Bracket-text area = 320 - 104 - 104 = 112px.
+   "mode" ~39px, "180hp" ~43px. Center pair:
+   offset = (112 - 39 - 8 - 43) / 2 = 11px from each side.
+   Default they fill the 112px spread. So translateX inward:
+   "mode": (112/2 - 39/2 - 4) = 32.5px right
+   "180hp": (112/2 - 43/2 - 4) = 30.5px left */
 
-/* Mode default: text spread apart */
-.card-mode .bracket-text {
-  justify-content: space-between;
-}
-
-/* Mode hover: instant orange color, text centers with 8px gap */
 .card-mode:hover .mode-label,
 .card-mode:hover .mode-hp {
   color: #fe5000;
@@ -362,9 +342,12 @@ body {
   filter: brightness(0) saturate(100%) invert(38%) sepia(96%) saturate(2574%) hue-rotate(11deg) brightness(102%) contrast(106%);
 }
 
-.card-mode:hover .bracket-text {
-  justify-content: center;
-  gap: 8px;
+.card-mode:hover .mode-label {
+  transform: translateX(33px);
+}
+
+.card-mode:hover .mode-hp {
+  transform: translateX(-31px);
 }
 
 /* ─── Labels ─── */
@@ -377,26 +360,12 @@ body {
   z-index: 2;
 }
 
-.label-center-left {
-  top: 50%;
-  transform: translateY(-50%);
-}
-
+.label-center-left { top: 50%; transform: translateY(-50%); }
 .label-bottom-left { bottom: 16px; }
 .label-top-left { top: 16px; }
 
-.label-row {
-  display: flex;
-  align-items: center;
-  height: 24px;
-}
-
-.label-pad {
-  width: 16px;
-  height: 24px;
-  background: #000;
-  flex-shrink: 0;
-}
+.label-row { display: flex; align-items: center; height: 24px; }
+.label-pad { width: 16px; height: 24px; background: #000; flex-shrink: 0; }
 
 .label-content {
   display: flex;
@@ -418,36 +387,16 @@ body {
   font-feature-settings: 'ss09' 1, 'ss08' 1;
 }
 
-.label-cap {
-  width: 15px;
-  height: 24px;
-  flex-shrink: 0;
-}
-
-.label-cap img {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.label-sep {
-  width: 16px;
-  height: 1px;
-  background: #000;
-}
+.label-cap { width: 15px; height: 24px; flex-shrink: 0; }
+.label-cap img { width: 100%; height: 100%; display: block; }
+.label-sep { width: 16px; height: 1px; background: #000; }
 
 /* ─── Pagination dots ─── */
 
-.label-dots {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  height: 8px;
-}
+.label-dots { display: flex; align-items: center; gap: 4px; height: 8px; }
 
 .dot {
-  width: 4px;
-  height: 4px;
+  width: 4px; height: 4px;
   border-radius: 9999px;
   background: #fff;
   opacity: 0.3;
@@ -455,8 +404,7 @@ body {
 }
 
 .dot-bar {
-  width: 24px;
-  height: 4px;
+  width: 24px; height: 4px;
   border-radius: 9999px;
   background: rgba(255, 255, 255, 0.3);
   position: relative;
@@ -464,39 +412,26 @@ body {
   overflow: hidden;
 }
 
-.dot-bar:not(.is-active) {
-  width: 4px;
-  background: rgba(255, 255, 255, 0.3);
-}
+.dot-bar:not(.is-active) { width: 4px; background: rgba(255, 255, 255, 0.3); }
 
 .dot-fill {
   position: absolute;
-  top: 0;
-  left: 0;
-  height: 4px;
-  width: 0;
+  top: 0; left: 0;
+  height: 4px; width: 0;
   border-radius: 9999px;
   background: #fff;
   animation: dot-progress 2s linear forwards;
 }
 
-@keyframes dot-progress {
-  from { width: 0; }
-  to { width: 100%; }
-}
+@keyframes dot-progress { from { width: 0; } to { width: 100%; } }
 
 /* ─── Responsive ─── */
 
 @media (max-width: 1050px) {
   .top-nav {
-    top: 16px;
-    left: 16px;
-    right: 16px;
-    height: auto;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px 16px;
+    top: 16px; left: 16px; right: 16px;
+    height: auto; display: flex; flex-wrap: wrap;
+    align-items: center; gap: 12px 16px;
   }
   .nav-fixed { position: static; }
   .brand { font-size: 14px; }
@@ -505,9 +440,5 @@ body {
 }
 
 @media (max-width: 760px) {
-  .top-nav {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
+  .top-nav { flex-direction: column; align-items: flex-start; gap: 10px; }
 }
