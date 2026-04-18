@@ -363,17 +363,17 @@ body {
 
 .card-mode .card-brackets {
   height: calc(var(--slide-h) * 208 / 432);
-  background: #000;
+  background: #3C3C3C;
 }
 
 .card-mode .card-brackets + .card-bottom { margin-top: calc(var(--slide-h) * 16 / 432); }
 
 .card-mode .bracket-left,
 .card-mode .bracket-right {
-  color: #fff;
+  color: #000;
 }
 
-/* Mode hover: bg turns orange, shapes stay dark grey, text turns orange */
+/* Mode hover: bg turns orange, shapes stay black, text turns orange */
 .card-mode:hover .card-brackets {
   background: #fe5000;
 }
