@@ -370,7 +370,7 @@ body {
 
 .card-mode .bracket-left,
 .card-mode .bracket-right {
-  color: #3C3C3C;
+  color: #fff;
 }
 
 /* Mode hover: bg turns orange, shapes stay dark grey, text turns orange */
